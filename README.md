@@ -1,4 +1,4 @@
-# SGV_
+# SVG_
 Converting SVG files to PNG with color manipulations
 
 ### Install
