@@ -9,7 +9,7 @@ export PYTHONPATH="$PYTHONPATH:/path/to/svg_"
 
 ### Use
 ```python
-import svg_
+from svg_ import svg_
 path = "/path/to/file.svg"
 sgv_.covert(path, color="#00000")
 ```
