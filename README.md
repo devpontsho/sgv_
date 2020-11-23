@@ -9,10 +9,11 @@ pip install cairosvg
 pip install pyside2
 ```
 
-### Install
+### PIP Install
 ```sh
-git clone https://github.com/devpontsho/svg_.git
-export PYTHONPATH="$PYTHONPATH:/path/to/svg_"
+git clone https://github.com/devpontsho/svg_to_qt.git
+cd svg_to_qt
+pip install .
 ```
 
 ### Usage
