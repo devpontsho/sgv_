@@ -79,8 +79,26 @@ def convert(path, color, replace=True, output=''):
 		data = f.read()
 
 	# Changed the svg's color
-	if 'style' in data and 'fill:' in data :
-		data = data.replace('fill', 'fill:"{}";'.format(color))
+
+	# Fill in style
+	if 'style' in data and 'fill:' in data:
+		
+		for code in data.split(' '):
+			if code.startswith('style'):
+				
+				for style_tag in code.split('"'):
+    				
+					if style_tag.startswith('fill'):
+    					
+						new_style = code.replace(style_tag, 'fill:{};'.format(color))
+						data = data.replace(code, new_style)
+
+	# Fill without style
+	elif 'fill=' in data:
+
+		for code in data.split(' '):
+			if code.startswith('fill'):
+				data = data.replace(code, 'fill="{}"'.format(color))
 
 	else:
 		data = data.replace('path', 'path fill="{}"'.format(color))
