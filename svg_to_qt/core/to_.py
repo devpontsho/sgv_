@@ -1,6 +1,6 @@
 __author__ = 'Pontsho Maseko'
 __version__ = 1.0
-__all__ = ['generate_py_rcc', 'convert', 'generate_path']
+__all__ = ['generate_py_rcc', 'convert', 'generate_path', 'add_file_to_rcc']
 
 
 import os
@@ -100,6 +100,7 @@ def convert(path, color, replace=True, output=''):
 			if code.startswith('fill'):
 				data = data.replace(code, 'fill="{}"'.format(color))
 
+	# Create 
 	else:
 		data = data.replace('path', 'path fill="{}"'.format(color))
 	
@@ -119,7 +120,6 @@ def convert(path, color, replace=True, output=''):
 		print('Deleted : {}'.format(temp_out))
 	except:
 		print('Failed to delete : {}'.format(temp_out))
-
 
 def generate_rcc(svgs, out_folder, color='#000000'):
 
@@ -168,5 +168,35 @@ def generate_rcc(svgs, out_folder, color='#000000'):
 
 	# Return
 	return py_rcc
+
+def add_file_to_rcc(resource_file, file):
+
+	"""Add file to a resource file
+	:param resource_file: The resource file.
+	:param file: The file to add to the resource file.
+	:return : None.
+	"""
+
+	# Get the qrc code
+	with open(resource_file, 'r') as f:
+		rc_code = f.read()
+
+	# Lines of the rc code
+	lines = rc_code.split('\n')
+
+	# Code
+	code = '\t<file alias="{Alias}">{File}</file>'.format(
+		Alias=os.path.basename(file), File=file)
+
+	# Add code to the lines
+	lines.insert( len(lines) - 3, code)
+	rc_code = '\n'.join(lines)
+
+	# Write the rc code
+	with open(resource_file, 'w+') as f:
+		f.write(rc_code)
+
+	# Generate the python resource file
+	generate_py_rcc(resource_file)
 
 

@@ -8,7 +8,9 @@ import os
 # Add current dir to path
 root = os.path.dirname(os.path.abspath(__file__))
 paths = [
-    root, os.path.join(root, 'core'), os.path.join(root, 'resources'), os.path.join(root, 'ui')
+    root, os.path.join(root, 'core'), 
+    os.path.join(root, 'resources'), 
+    os.path.join(root, 'ui')
 ]
 for path in paths:
     if not path in sys.path:
@@ -18,6 +20,8 @@ for path in paths:
 from PySide2 import QtWidgets
 
 from ui import ui
+from resources import resources
+
 
 def standalone():
 
@@ -41,7 +45,6 @@ def standalone():
     win.show()
 
     sys.exit(app.exec_())
-
 
 
 if __name__ == '__main__':

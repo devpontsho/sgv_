@@ -1,0 +1,35 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+	<file alias="angle-left.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/angle-left.png</file>
+	<file alias="angle-right.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/angle-right.png</file>
+	<file alias="angle-up.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/angle-up.png</file>
+	<file alias="book.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/book.png</file>
+	<file alias="circle-notch.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/circle-notch.png</file>
+	<file alias="folder.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/folder.png</file>
+	<file alias="grip-horizontal.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/grip-horizontal.png</file>
+	<file alias="heart.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/heart.png</file>
+	<file alias="list.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/list.png</file>
+	<file alias="minus-square.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/minus-square.png</file>
+	<file alias="search.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/search.png</file>
+	<file alias="stop.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/stop.png</file>
+	<file alias="tag.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/tag.png</file>
+	<file alias="th-large.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/th-large.png</file>
+	<file alias="trash.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/trash.png</file>
+	<file alias="user-secret.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/user-secret.png</file>
+	<file alias="video.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/video.png</file>
+	<file alias="window-close.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/window-close.png</file>
+	<file alias="window-minimize.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/window-minimize.png</file>
+	<file alias="image.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/image.png</file>
+	<file alias="plus-square.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/plus-square.png</file>
+	<file alias="minus-square.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/minus-square.png</file>
+	<file alias="window-maximize.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/window-maximize.png</file>
+	<file alias="window-restore.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/window-restore.png</file>
+	<file alias="heart.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/heart.png</file>
+	<file alias="cogs.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/cogs.png</file>
+	<file alias="check-square.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/check-square.png</file>
+	<file alias="maya.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/maya.png</file>
+	<file alias="houdinibadge.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/houdinibadge.png</file>
+	<file alias="usdview.jpg">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/usdview.jpg</file>
+	<file alias="square.png">/Users/dev/dev__/work/asset_manager-prototype/prototype_/assets/icons/square.png</file>
+</qresource>
+</RCC>
