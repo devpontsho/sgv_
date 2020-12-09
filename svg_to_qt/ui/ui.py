@@ -15,12 +15,12 @@ class MakerUI(QtWidgets.QWidget):
         self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
-        self.setMaximumSize(700, 600)
+        self.setMinimumSize(700, 600)
 
         # Set Attributes
-        self._radius = 0
-        self._background = QtGui.QColor(62, 62, 62)
-        self._foreground = QtGui.QColor(62, 62, 62)
+        self.radius = 0
+        self.background = QtGui.QColor(62, 62, 62)
+        self.foreground = QtGui.QColor(62, 62, 62)
 
         # Main Layout
         m_layout = QtWidgets.QVBoxLayout()
@@ -28,7 +28,7 @@ class MakerUI(QtWidgets.QWidget):
 
 
         # Header
-        _header = header.Header()
+        _header = header.Header(title='Maker - Untitled')
         _header.main_window = self
         m_layout.addWidget(_header)
 
@@ -44,6 +44,30 @@ class MakerUI(QtWidgets.QWidget):
         self._at = at_editor.AttributeEditor()
         body.addWidget(self._at)
 
+    @property
+    def background(self):
+        return self._background
+
+    @background.setter
+    def background(self, color):
+        self._background = color
+
+    @property
+    def foreground(self):
+        return self._foreground
+
+    @foreground.setter
+    def foreground(self, color):
+        self._foreground = color
+
+    @property
+    def radius(self):
+        return self._radius
+
+    @radius.setter
+    def radius(self, value):
+        self._radius = value
+
     def _should_resize(self):
 
         rect = self.geometry()
@@ -54,7 +78,7 @@ class MakerUI(QtWidgets.QWidget):
         x_end, y_end = (x + w, y + h)
 
         g_x, g_y = (self._glob_pos.x(), self._glob_pos.y())
-        print(x_end, y_end, ' - ', g_x, g_y)
+        #print(x_end, y_end, ' - ', g_x, g_y)
 
 
 
@@ -79,7 +103,7 @@ class MakerUI(QtWidgets.QWidget):
                 if within:
                     print('Resizing')
                 else:
-                    print('Moving')
+
                     self.move(self.pos() + (event.globalPos() - self._glob_pos))
                     self._glob_pos = event.globalPos()
 

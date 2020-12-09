@@ -4,6 +4,7 @@ __all__ = 'standalone'
 
 import sys
 import os
+import glob
 
 # Add current dir to path
 root = os.path.dirname(os.path.abspath(__file__))
@@ -17,7 +18,7 @@ for path in paths:
         sys.path.append(path)
 
 
-from PySide2 import QtWidgets
+from PySide2 import QtWidgets, QtGui
 
 from ui import ui
 from resources import resources
@@ -29,9 +30,21 @@ def standalone():
     :return: None.
     """
 
+
     # App and app style
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle(QtWidgets.QStyleFactory.create('fusion'))
+
+    # Fonts dir
+    fonts_dir = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'resources/fonts')
+
+    # Get fonts
+    fonts = glob.glob('{}/*/*.ttf'.format(fonts_dir), recursive=True)
+
+    # Add fonts
+    for font in fonts:
+        QtGui.QFontDatabase.addApplicationFont(font)
 
     # Read the stylesheet
     with open('{}/resources/style.qss'.format(root), 'r') as f:

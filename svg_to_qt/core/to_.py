@@ -9,6 +9,35 @@ import string
 import cairosvg
 import subprocess
 
+
+def get_svgs(names, root, folders):
+    
+    """Get svgs from multiple folders.
+    :return: List
+    """
+    
+    svgs = []
+    if len(folders) > 0 :
+    
+        for folder in folders:
+            path = os.path.join(root, folder)
+            contents = os.listdir(path)
+            
+            for item in contents:
+                if item in names:
+                    item_path = os.path.join(path, item)
+                    svgs.append(item_path)
+    
+    else :
+        
+        contents = os.listdir(root)
+        for item in contents:
+            if item in names:
+                item_path = os.path.join(path, item)
+                svgs.append(item_path)
+                
+    return svgs
+    
 def generate_path(folder, exten='.svg', length=5):
 
 	"""Generate a temporary path.
@@ -76,9 +105,11 @@ def convert(path, color, replace=True, output=''):
 
 	# Read the svg
 	with open(path, 'r') as f:
-		data = f.read()
-
-	# Changed the svg's color
+		try:
+			data = f.read()
+		except:
+			print('Failed to read : {}'.format(path))
+			return
 
 	# Fill in style
 	if 'style' in data and 'fill:' in data:

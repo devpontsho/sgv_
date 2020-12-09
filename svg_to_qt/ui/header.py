@@ -6,12 +6,17 @@ from PySide2 import QtWidgets, QtGui, QtCore
 
 class Header(QtWidgets.QWidget):
 
+    _title_text = ''
+
     def __init__(self, parent=None, title='', icon=':user-secrete.png' ):
         super(Header, self).__init__(parent)
 
         # Set parent
         self.main_window = None
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+
+
+        self.setFixedHeight(20)
 
         # Icon size
         icon_size = QtCore.QSize(15, 15)
@@ -21,6 +26,19 @@ class Header(QtWidgets.QWidget):
         m_layout.setSpacing(0)
         m_layout.setMargin(0)
         self.setLayout(m_layout)
+
+        size = self.size()
+        self._spacer = QtWidgets.QSpacerItem(size.width() - 100, 0)
+
+        # Title
+        self._title = QtWidgets.QLabel()
+        m_layout.addWidget(self._title)
+
+        self.title = title
+
+        # Spacer
+        m_layout.addItem(self._spacer)
+
 
         # Buttons
         buttons_wid = QtWidgets.QWidget()
@@ -57,6 +75,22 @@ class Header(QtWidgets.QWidget):
         close_btn.setIconSize(icon_size)
         button_lay.addWidget(close_btn)
 
+
+    @property
+    def title(self):
+        return self._title
+
+    @title.setter
+    def title(self, text):
+        
+        self._title.setText(text)
+        self._title_text = text
+
+        size = self.size()
+        print(self._title.size())
+
+        self._spacer.changeSize(size.width() - 100, 0)
+
     @property
     def main_window(self):
         return self._parent
@@ -64,6 +98,13 @@ class Header(QtWidgets.QWidget):
     @main_window.setter
     def main_window(self, widget):
         self._parent = widget
+
+    def resizeEvent(self, event):
+        
+        e_size = event.size()
+        self._spacer.changeSize(e_size.width() - 100, 0)
+
+        super(Header, self).resizeEvent(event)
 
     def _close(self):
 
