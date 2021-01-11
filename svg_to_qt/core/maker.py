@@ -6,10 +6,6 @@ import os
 import sys
 
 
-# Import svg_to_qt
-from core import to_
-
-
 def create_svg(data):
 
     """Create svg from data given.
@@ -68,23 +64,3 @@ def write_svg(data, output=''):
         f.write(data)
 
     print('SVG : {}'.format(output))
-
-
-data = {
-    'height' : 300,
-    'width' : 300,
-    'draws' : {
-        'rect': {
-            'x': 0,
-            'y' : 0,
-            'width': 200,
-            'height': 200,
-            'style': {
-                'fill': 'red'
-            }
-        }
-    },
-    'output': './out.svg'
-}
-create_svg(data)
-to_.convert(data['output'], 'yellow')

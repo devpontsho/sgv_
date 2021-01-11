@@ -13,6 +13,9 @@ import subprocess
 def get_svgs(names, root, folders):
     
     """Get svgs from multiple folders.
+    :param names: The names of the svg files.
+    :param root: The root folder that the folders are in.
+    :param folders: A list of folder names
     :return: List
     """
     
@@ -33,15 +36,17 @@ def get_svgs(names, root, folders):
         contents = os.listdir(root)
         for item in contents:
             if item in names:
-                item_path = os.path.join(path, item)
+                item_path = os.path.join(root, item)
                 svgs.append(item_path)
                 
     return svgs
-    
+
+
 def generate_path(folder, exten='.svg', length=5):
 
 	"""Generate a temporary path.
 	:param folder: The path to the folder to save in.
+	:param exten: The extern of the path that needs to be generated.
 	:param length: The name length.
 	:return: Str.
 	"""
@@ -53,6 +58,7 @@ def generate_path(folder, exten='.svg', length=5):
 	name += exten
 	path = os.path.join(folder, name)
 	return path
+
 
 def generate_py_rcc(path, output=''):
 
@@ -86,21 +92,23 @@ def generate_py_rcc(path, output=''):
 	print('Py Resource File : {}'.format(output))
 	return output
 
-def convert(path, color, replace=True, output=''):
+
+def convert(path, color, _replace=True, output=''):
 
 	"""Changes the color of the svg and converts to png.
 	:param path: The path to svg image.
-	:param color: Hex code for the color to change to. 
+	:param color: Hex code for the color to change to.
+	:param _replace: Should it replace files if they exist.
 	:param output: The output path of the new png.
 	:return: Str
 	"""
 
 	# Check if the output path is given
 	if output == '':
-		output = path.replace('svg', 'png')
+		output = path.replace('.svg', '.png')
 
 	# Delete output if exists
-	if os.path.isfile(output) and replace == True:
+	if os.path.isfile(output) and _replace == True:
 		os.remove(output)
 
 	# Read the svg
@@ -118,9 +126,7 @@ def convert(path, color, replace=True, output=''):
 			if code.startswith('style'):
 				
 				for style_tag in code.split('"'):
-    				
 					if style_tag.startswith('fill'):
-    					
 						new_style = code.replace(style_tag, 'fill:{};'.format(color))
 						data = data.replace(code, new_style)
 
@@ -152,10 +158,11 @@ def convert(path, color, replace=True, output=''):
 	except:
 		print('Failed to delete : {}'.format(temp_out))
 
+
 def generate_rcc(svgs, out_folder, color='#000000'):
 
 	"""Will generate a rcc file for resources from svgs
-	:param svg: The list of svgs.
+	:param svgs: The list of svgs.
 	:param out_folder: The output folder for the new png icons and resource file.
 	:param color: The color to conver the svg file to, default is black.
 	:return: Str.
@@ -199,6 +206,7 @@ def generate_rcc(svgs, out_folder, color='#000000'):
 
 	# Return
 	return py_rcc
+
 
 def add_file_to_rcc(resource_file, file):
 
