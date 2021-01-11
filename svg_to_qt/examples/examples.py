@@ -3,7 +3,7 @@ __version__ = 1.0
 
 import os
 
-from core import maker, converter
+from svg_to_qt.core import maker, converter
 
 
 def create():
@@ -24,4 +24,4 @@ def create():
         'output': os.path.join(os.path.dirname(__file__), 'out.svg')
     }
     maker.create_svg(data)
-    converter.convert(data['output'], 'yellow')
+    converter.convert(data['output'], 'red')

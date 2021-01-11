@@ -1,9 +1,6 @@
 __author__ = 'Pontsho Maseko'
 __version__ = 1.0
-__all__ = ['write_svg']
-
-import os
-import sys
+__all__ = ['create_svg', 'write_svg']
 
 
 def create_svg(data):
