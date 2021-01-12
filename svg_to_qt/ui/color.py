@@ -14,7 +14,7 @@ class Color(QtWidgets.QWidget):
         self.setLayout(m_layout)
 
         # label
-        label = QtWidgets.QLabel('Color :      ')
+        label = QtWidgets.QLabel('Color :               ')
         m_layout.addWidget(label, 0, 0)
 
         # Edit

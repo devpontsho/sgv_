@@ -19,7 +19,7 @@ class Browser(QtWidgets.QWidget):
         self.setLayout(m_layout)
 
         # Method label
-        method_label = QtWidgets.QLabel('Type : ')
+        method_label = QtWidgets.QLabel('Type :                ')
         m_layout.addWidget(method_label, 0, 0)
 
         # Method
