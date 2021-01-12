@@ -1,12 +1,21 @@
-QMainWindow{
-    background-color: #4d4d4d;
-}
-
 QWidget{
     background-color: #333333;
     color: white;
 }
 
-QDockWidget{
-    color: white;
+
+QPushButton{
+    background-color: #2e2e2e;
+    border-radius : 5px;
+}
+
+QPushButton::pressed {
+    background-color: #479aed;
+    border-radius : 5px;
+}
+
+QLineEdit {
+    height : 25px;
+    padding : 4px;
+    font-size: 14px;
 }

@@ -1,6 +1,8 @@
 __author__ = 'Pontsho Maseko'
 __version__ = 1.0
 
+import os
+
 from PySide2 import QtWidgets, QtGui, QtCore
 
 
@@ -38,9 +40,9 @@ class Browser(QtWidgets.QWidget):
         browse_icon = QtGui.QIcon(':file-upload.png')
         browse_btn = QtWidgets.QPushButton()
         browse_btn.clicked.connect(self._browse)
-        browse_btn.setFixedSize(45, 45)
+        browse_btn.setFixedSize(35, 35)
         browse_btn.setIcon(browse_icon)
-        browse_btn.setIconSize(QtCore.QSize(40, 40))
+        browse_btn.setIconSize(QtCore.QSize(25, 25))
         m_layout.addWidget(browse_btn, 1, 2)
 
     def _browse(self):
@@ -55,7 +57,17 @@ class Browser(QtWidgets.QWidget):
         # Get file(s) or folder
         dialog = QtWidgets.QFileDialog()
         if method == 'Folder':
-            value = dialog.getExistingDirectory()
+
+            # Folder
+            folder = dialog.getExistingDirectory()
+            value = []
+
+            # Get SVG(s) in the folder
+            for item in os.listdir(folder):
+                if item.endswith('.svg'):
+                    path = os.path.join(folder, item)
+                    if not path in value:
+                        value.append(path)
         else:
             value = dialog.getOpenFileNames()[0]
 
