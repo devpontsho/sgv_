@@ -26,8 +26,8 @@ class UI(QtWidgets.QWidget):
 
         # Set Attributes
         self.radius = 0
-        self.background = QtGui.QColor(62, 62, 62)
-        self.foreground = QtGui.QColor(62, 62, 62)
+        self.background = QtGui.QColor(51, 51, 51)
+        self.foreground = QtGui.QColor(51, 51, 51)
 
         # Main Layout
         m_layout = QtWidgets.QVBoxLayout()
@@ -53,7 +53,7 @@ class UI(QtWidgets.QWidget):
         out_wid.setLayout(out_lay)
         left_lay.addWidget(out_wid)
 
-        out_icon = QtGui.QIcon(':plus-square.png')
+        out_icon = QtGui.QIcon(':file-upload.png')
         out_btn = QtWidgets.QPushButton()
         out_btn.clicked.connect(self._out_browse)
         out_btn.setFixedSize(35, 35)
@@ -86,9 +86,8 @@ class UI(QtWidgets.QWidget):
 
         # Footer
         footer = QtWidgets.QWidget()
+        footer.setFixedHeight(60)
         footer_lay = QtWidgets.QHBoxLayout()
-        footer_lay.setMargin(2)
-        footer_lay.setSpacing(0)
         footer_lay.setAlignment(QtCore.Qt.AlignCenter)
         footer.setLayout(footer_lay)
         m_layout.addWidget(footer)
@@ -96,13 +95,13 @@ class UI(QtWidgets.QWidget):
         # Convert
         convert_btn = QtWidgets.QPushButton('Convert to PNG')
         convert_btn.clicked.connect(self._convert)
-        convert_btn.setFixedHeight(50)
+        convert_btn.setFixedSize(200, 50)
         footer_lay.addWidget(convert_btn)
 
         # Make rcc
         rcc_btn = QtWidgets.QPushButton('Make Qt RCC')
         rcc_btn.clicked.connect(self._make_rcc)
-        rcc_btn.setFixedHeight(50)
+        rcc_btn.setFixedSize(200, 50)
         footer_lay.addWidget(rcc_btn)
 
     def _out_browse(self):
@@ -238,4 +237,4 @@ class UI(QtWidgets.QWidget):
         painter.end()
 
         # Super
-        super(UI, self).paintEvent(event)
+        #super(UI, self).paintEvent(event)

@@ -12,7 +12,7 @@ class AddButton(QtWidgets.QPushButton):
         super(AddButton, self).__init__(parent)
 
         # Set
-        self.setMinimumSize(300, 100)
+        self.setMinimumSize(300, 300)
         self.setAcceptDrops(True)
 
         # Icon

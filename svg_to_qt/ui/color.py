@@ -27,7 +27,7 @@ class Color(QtWidgets.QWidget):
         btn.clicked.connect(self._pick)
         btn.setFixedSize(35, 35)
         btn.setIcon(icon)
-        btn.setIconSize(QtCore.QSize(30, 30))
+        btn.setIconSize(QtCore.QSize(25, 25))
         m_layout.addWidget(btn, 0, 2)
 
     def _pick(self):
