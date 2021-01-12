@@ -1,15 +1,22 @@
 __author__ = 'Pontsho Maseko'
 __version__ = 1.0
-__all__ = ['MakerUI']
+__all__ = ['UI']
+
+import os
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from ui import canvas, at_editor, header
+from svg_to_qt.ui import header, color, browser, listview, addbutton
+from svg_to_qt.core import converter
 
-class MakerUI(QtWidgets.QWidget):
+
+class UI(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
-        super(MakerUI, self).__init__(parent)
+        super(UI, self).__init__(parent)
+
+        # Set
+        self._glob_pos = QtCore.QPoint()
 
         # Set attributes
         self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.FramelessWindowHint)
@@ -26,23 +33,136 @@ class MakerUI(QtWidgets.QWidget):
         m_layout = QtWidgets.QVBoxLayout()
         self.setLayout(m_layout)
 
-
         # Header
-        _header = header.Header(title='Maker - Untitled')
-        _header.main_window = self
+        _header = header.Header(title='SVG To Qt - Convert')
         m_layout.addWidget(_header)
 
-        # Body
-        body = QtWidgets.QSplitter()
-        m_layout.addWidget(body)
+        # Seperator
+        seperator = QtWidgets.QSplitter()
+        m_layout.addWidget(seperator)
 
-        # Canvas
-        self._canvas = canvas.Canvas()
-        body.addWidget(self._canvas)
+        # Left widget
+        left_wid = QtWidgets.QWidget()
+        seperator.addWidget(left_wid)
+        left_lay = QtWidgets.QVBoxLayout()
+        left_wid.setLayout(left_lay)
 
-        # Attribute
-        self._at = at_editor.AttributeEditor()
-        body.addWidget(self._at)
+        # Output
+        out_wid = QtWidgets.QWidget()
+        out_lay = QtWidgets.QGridLayout()
+        out_wid.setLayout(out_lay)
+        left_lay.addWidget(out_wid)
+
+        out_icon = QtGui.QIcon(':plus-square.png')
+        out_btn = QtWidgets.QPushButton()
+        out_btn.clicked.connect(self._out_browse)
+        out_btn.setFixedSize(35, 35)
+        out_btn.setIcon(out_icon)
+        out_btn.setIconSize(QtCore.QSize(30, 30))
+
+        output_label = QtWidgets.QLabel('Output Folder : ')
+        self._out_edit = QtWidgets.QLineEdit()
+        out_lay.addWidget(output_label, 0, 0)
+        out_lay.addWidget(self._out_edit, 0, 1)
+        out_lay.addWidget(out_btn, 0, 2)
+
+        # Color
+        self._color = color.Color()
+        left_lay.addWidget(self._color)
+
+        # Browser
+        _browser = browser.Browser()
+        left_lay.addWidget(_browser)
+
+        # List
+        self._list = listview.ListView()
+        _browser.gotFiles.connect(self._list.set_items)
+        left_lay.addWidget(self._list)
+
+        # Add
+        add = addbutton.AddButton()
+        add.gotFiles.connect(self._list.set_items)
+        seperator.addWidget(add)
+
+        # Footer
+        footer = QtWidgets.QWidget()
+        footer_lay = QtWidgets.QHBoxLayout()
+        footer_lay.setMargin(2)
+        footer_lay.setSpacing(0)
+        footer_lay.setAlignment(QtCore.Qt.AlignCenter)
+        footer.setLayout(footer_lay)
+        m_layout.addWidget(footer)
+
+        # Convert
+        convert_btn = QtWidgets.QPushButton('Convert to PNG')
+        convert_btn.clicked.connect(self._convert)
+        convert_btn.setFixedHeight(50)
+        footer_lay.addWidget(convert_btn)
+
+        # Make rcc
+        rcc_btn = QtWidgets.QPushButton('Make Qt RCC')
+        rcc_btn.clicked.connect(self._make_rcc)
+        rcc_btn.setFixedHeight(50)
+        footer_lay.addWidget(rcc_btn)
+
+    def _out_browse(self):
+
+        # File dialog
+        dialog = QtWidgets.QFileDialog()
+        folder = dialog.getExistingDirectory()
+
+        # Check the folder
+        if os.path.isdir(folder):
+            self._out_edit.setText(folder)
+
+    def _convert(self):
+
+        """Convert the svg(s) that are given"""
+
+        # Get files and check for list of files
+        files = self._list.get_files()
+        if len(files) == 0:
+            return
+
+        # Color
+        color = self._color.get()
+        if color == '':
+            color = '#1f1f1f'
+
+        # Out folder
+        out_folder = self._out_edit.text()
+        out = ''
+
+        # For each file
+        for f in files:
+
+            # Check if the out folder is a directory
+            if os.path.isdir(out_folder):
+                out = os.path.join(out_folder, os.path.basename(f))
+
+            # Convert
+            converter.convert(f, color, output=out)
+
+    def _make_rcc(self):
+
+        # Check file
+        files = self._list.get_files()
+        if len(files) == 0:
+            return
+
+        # Color
+        color = self._color.get()
+        if color == '':
+            color = '#1f1f1f'
+
+        # Out folder
+        out_folder = self._out_edit.text()
+        if not os.path.isdir(out_folder):
+            print('Please specify out folder for RCC file.')
+            return
+
+        # Make rcc file
+        converter.generate_rcc(files, out_folder, color)
 
     @property
     def background(self):
@@ -68,22 +188,6 @@ class MakerUI(QtWidgets.QWidget):
     def radius(self, value):
         self._radius = value
 
-    def _should_resize(self):
-
-        rect = self.geometry()
-        w, h = (rect.width(), rect.height())
-
-        # Pos
-        x, y = (rect.x(), rect.y())
-        x_end, y_end = (x + w, y + h)
-
-        g_x, g_y = (self._glob_pos.x(), self._glob_pos.y())
-        #print(x_end, y_end, ' - ', g_x, g_y)
-
-
-
-        return False
-
     def mouseMoveEvent(self, event):
 
         """Mouse is moveing
@@ -92,23 +196,11 @@ class MakerUI(QtWidgets.QWidget):
         """
 
         if event.buttons() == QtCore.Qt.LeftButton:
-            
-            within = self._should_resize()
-
-
-            drag_dist = QtWidgets.QApplication.startDragDistance()
-            dist =  self._pos - event.pos()
-            if dist.x() > drag_dist or dist.y() > drag_dist and within:
-
-                if within:
-                    print('Resizing')
-                else:
-
-                    self.move(self.pos() + (event.globalPos() - self._glob_pos))
-                    self._glob_pos = event.globalPos()
+            self.move(self.pos() + (event.globalPos() - self._glob_pos))
+            self._glob_pos = event.globalPos()
 
         # Event
-        super(MakerUI, self).mouseMoveEvent(event)
+        super(UI, self).mouseMoveEvent(event)
 
     def mousePressEvent(self, event):
 
@@ -123,7 +215,7 @@ class MakerUI(QtWidgets.QWidget):
             self._glob_pos = event.globalPos()
         
         # Mouse press
-        super(MakerUI, self).mousePressEvent(event)
+        super(UI, self).mousePressEvent(event)
 
     def paintEvent(self, event):
 
@@ -146,4 +238,4 @@ class MakerUI(QtWidgets.QWidget):
         painter.end()
 
         # Super
-        super(MakerUI, self).paintEvent(event)
+        super(UI, self).paintEvent(event)

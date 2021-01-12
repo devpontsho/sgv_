@@ -106,6 +106,8 @@ def convert(path, color, _replace=True, output=''):
 	# Check if the output path is given
 	if output == '':
 		output = path.replace('.svg', '.png')
+	else:
+		output = output.replace('.svg', '.png')
 
 	# Delete output if exists
 	if os.path.isfile(output) and _replace == True:

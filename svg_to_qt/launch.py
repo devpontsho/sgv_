@@ -6,22 +6,10 @@ import sys
 import os
 import glob
 
-# Add current dir to path
-root = os.path.dirname(os.path.abspath(__file__))
-paths = [
-    root, os.path.join(root, 'core'), 
-    os.path.join(root, 'resources'), 
-    os.path.join(root, 'ui')
-]
-for path in paths:
-    if not path in sys.path:
-        sys.path.append(path)
-
-
 from PySide2 import QtWidgets, QtGui
 
-from ui import ui
-from resources import resources
+from svg_to_qt.ui import ui
+from svg_to_qt.resources import resources
 
 
 def standalone():
@@ -30,6 +18,11 @@ def standalone():
     :return: None.
     """
 
+    # Environment for Mac's new OS
+    os.environ['QT_MAC_WANTS_LAYER'] = '1'
+
+    # Root folder
+    root = os.path.dirname(os.path.abspath(__file__))
 
     # App and app style
     app = QtWidgets.QApplication(sys.argv)
@@ -37,7 +30,7 @@ def standalone():
 
     # Fonts dir
     fonts_dir = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'resources/fonts')
+        os.path.dirname(root), 'resources/fonts')
 
     # Get fonts
     fonts = glob.glob('{}/*/*.ttf'.format(fonts_dir), recursive=True)
@@ -54,12 +47,11 @@ def standalone():
     app.setStyleSheet(stylesheet)
 
     # Window
-    win = ui.MakerUI()
+    win = ui.UI()
     win.show()
 
     sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
-
     standalone()
