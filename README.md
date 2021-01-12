@@ -18,12 +18,12 @@ pip install .
 
 ### Usage
 ```python
-from svg_ import svg_
+from svg_to_qt.core import converter
 path = "/path/to/file.svg"
-sgv_.covert(path, color="#00000")
+converter.covert(path, color="#00000")
 ```
 
-#### Functions
+#### Converter Functions
 ```python
 generate_py_rcc(path, output=''): #returns None
 ```
