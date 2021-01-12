@@ -1,6 +1,6 @@
 __author__ = 'Pontsho Maseko'
 __version__ = 1.0
-__all__ = ['generate_py_rcc', 'convert', 'generate_path']
+__all__ = ['generate_py_rcc', 'convert', 'generate_path', 'add_file_to_rcc']
 
 
 import os
@@ -9,10 +9,44 @@ import string
 import cairosvg
 import subprocess
 
+
+def get_svgs(names, root, folders):
+    
+    """Get svgs from multiple folders.
+    :param names: The names of the svg files.
+    :param root: The root folder that the folders are in.
+    :param folders: A list of folder names
+    :return: List
+    """
+    
+    svgs = []
+    if len(folders) > 0 :
+    
+        for folder in folders:
+            path = os.path.join(root, folder)
+            contents = os.listdir(path)
+            
+            for item in contents:
+                if item in names:
+                    item_path = os.path.join(path, item)
+                    svgs.append(item_path)
+    
+    else :
+        
+        contents = os.listdir(root)
+        for item in contents:
+            if item in names:
+                item_path = os.path.join(root, item)
+                svgs.append(item_path)
+                
+    return svgs
+
+
 def generate_path(folder, exten='.svg', length=5):
 
 	"""Generate a temporary path.
 	:param folder: The path to the folder to save in.
+	:param exten: The extern of the path that needs to be generated.
 	:param length: The name length.
 	:return: Str.
 	"""
@@ -24,6 +58,7 @@ def generate_path(folder, exten='.svg', length=5):
 	name += exten
 	path = os.path.join(folder, name)
 	return path
+
 
 def generate_py_rcc(path, output=''):
 
@@ -57,31 +92,54 @@ def generate_py_rcc(path, output=''):
 	print('Py Resource File : {}'.format(output))
 	return output
 
-def convert(path, color, replace=True, output=''):
+
+def convert(path, color, _replace=True, output=''):
 
 	"""Changes the color of the svg and converts to png.
 	:param path: The path to svg image.
-	:param color: Hex code for the color to change to. 
+	:param color: Hex code for the color to change to.
+	:param _replace: Should it replace files if they exist.
 	:param output: The output path of the new png.
 	:return: Str
 	"""
 
 	# Check if the output path is given
 	if output == '':
-		output = path.replace('svg', 'png')
+		output = path.replace('.svg', '.png')
+	else:
+		output = output.replace('.svg', '.png')
 
 	# Delete output if exists
-	if os.path.isfile(output) and replace == True:
+	if os.path.isfile(output) and _replace == True:
 		os.remove(output)
 
 	# Read the svg
 	with open(path, 'r') as f:
-		data = f.read()
+		try:
+			data = f.read()
+		except:
+			print('Failed to read : {}'.format(path))
+			return
 
-	# Changed the svg's color
-	if 'style' in data and 'fill:' in data :
-		data = data.replace('fill', 'fill:"{}";'.format(color))
+	# Fill in style
+	if 'style' in data and 'fill:' in data:
+		
+		for code in data.split(' '):
+			if code.startswith('style'):
+				
+				for style_tag in code.split('"'):
+					if style_tag.startswith('fill'):
+						new_style = code.replace(style_tag, 'fill:{};'.format(color))
+						data = data.replace(code, new_style)
 
+	# Fill without style
+	elif 'fill=' in data:
+
+		for code in data.split(' '):
+			if code.startswith('fill'):
+				data = data.replace(code, 'fill="{}"'.format(color))
+
+	# Create 
 	else:
 		data = data.replace('path', 'path fill="{}"'.format(color))
 	
@@ -106,7 +164,7 @@ def convert(path, color, replace=True, output=''):
 def generate_rcc(svgs, out_folder, color='#000000'):
 
 	"""Will generate a rcc file for resources from svgs
-	:param svg: The list of svgs.
+	:param svgs: The list of svgs.
 	:param out_folder: The output folder for the new png icons and resource file.
 	:param color: The color to conver the svg file to, default is black.
 	:return: Str.
@@ -150,5 +208,36 @@ def generate_rcc(svgs, out_folder, color='#000000'):
 
 	# Return
 	return py_rcc
+
+
+def add_file_to_rcc(resource_file, file):
+
+	"""Add file to a resource file
+	:param resource_file: The resource file.
+	:param file: The file to add to the resource file.
+	:return : None.
+	"""
+
+	# Get the qrc code
+	with open(resource_file, 'r') as f:
+		rc_code = f.read()
+
+	# Lines of the rc code
+	lines = rc_code.split('\n')
+
+	# Code
+	code = '\t<file alias="{Alias}">{File}</file>'.format(
+		Alias=os.path.basename(file), File=file)
+
+	# Add code to the lines
+	lines.insert( len(lines) - 3, code)
+	rc_code = '\n'.join(lines)
+
+	# Write the rc code
+	with open(resource_file, 'w+') as f:
+		f.write(rc_code)
+
+	# Generate the python resource file
+	generate_py_rcc(resource_file)
 
 
