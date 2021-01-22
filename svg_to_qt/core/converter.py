@@ -6,8 +6,47 @@ __all__ = ['generate_py_rcc', 'convert', 'generate_path', 'add_file_to_rcc']
 import os
 import random
 import string
-import cairosvg
+
+try:
+	import cairosvg
+except OSError as e:
+	import cairo
+	from svg_to_qt.core import rsvg
+
+import xml.etree.ElementTree as et
 import subprocess
+
+
+def windows_convert(source, dest):
+
+	"""Windows converting svg to png.
+	:param source: The svg path
+	:param dest: Output path
+	:return: None"""
+
+	parser = et.parse(source)
+	data = parser.getroot().attrib
+	width = 0
+	height = 0
+
+	if 'viewBox' in data.keys():
+		value = data['viewBox'].split(' ')
+		width = int(value[-2])
+		height = int(value[-1])
+
+	if 'width' in data.keys():
+		width = int(data['width'])
+
+	if 'height' in data.keys():
+		height = int(data['height'])
+
+	print('SVG Resolution : ', width, height)
+
+	img = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+	ctx = cairo.Context(img)
+	handle = rsvg.Handle(source)
+	handle.render_cairo(ctx)
+	img.write_to_png(dest)
 
 
 def get_svgs(names, root, folders):
@@ -150,7 +189,10 @@ def convert(path, color, _replace=True, output=''):
 	
 	# To PNG
 	print('Temporary SVG : ', temp_out)
-	cairosvg.svg2png(url=temp_out, write_to=output)
+	try:
+		cairosvg.svg2png(url=temp_out, write_to=output)
+	except:
+		windows_convert(temp_out, output)
 	print('Output : ', output)
 
 	# Remove new svg
