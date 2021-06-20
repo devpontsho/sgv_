@@ -22,10 +22,10 @@ class UI(QtWidgets.QWidget):
         self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
-        self.setMinimumSize(700, 600)
+        self.setMinimumSize(1000, 600)
 
         # Set Attributes
-        self.radius = 0
+        self.radius = 2
         self.background = QtGui.QColor(51, 51, 51)
         self.foreground = QtGui.QColor(51, 51, 51)
 
@@ -69,6 +69,22 @@ class UI(QtWidgets.QWidget):
         # Color
         self._color = color.Color()
         left_lay.addWidget(self._color)
+
+        # Type
+        rcc_wid = QtWidgets.QWidget()
+        rcc_lay = QtWidgets.QHBoxLayout()
+        rcc_lay.setAlignment(QtCore.Qt.AlignLeft)
+        rcc_wid.setLayout(rcc_lay)
+
+        label_rcc_type = QtWidgets.QLabel('RCC Type :       ')
+        self._rcc_type = QtWidgets.QComboBox()
+        self._rcc_type.setFixedWidth(495)
+        self._rcc_type.addItem('python')
+        self._rcc_type.addItem('c++')
+        rcc_lay.addWidget(label_rcc_type)
+        rcc_lay.addWidget(self._rcc_type)
+
+        left_lay.addWidget(rcc_wid)
 
         # Browser
         _browser = browser.Browser()
@@ -161,7 +177,7 @@ class UI(QtWidgets.QWidget):
             return
 
         # Make rcc file
-        converter.generate_rcc(files, out_folder, color)
+        converter.generate_rcc(files, out_folder, color, self._rcc_type.currentText())
 
     @property
     def background(self):
