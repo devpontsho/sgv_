@@ -42,7 +42,7 @@ def get_svgs(names: list, root: str, folders: list) -> list:
     return svgs
 
 
-def generate_rcc_output(qrc_file: str, rcc_type: str = 'python') -> list:
+def generate_rcc_output(qrc_file: str, rcc_type: str = 'python', qt_build_dir: str = '') -> list:
 
 	"""Generate the output files for the compile resource files.
 	:param qrc_file: The qrc file to compile
@@ -56,7 +56,7 @@ def generate_rcc_output(qrc_file: str, rcc_type: str = 'python') -> list:
 
 	# Command files
 	py_command = f'pyside2-rcc {qrc_file} -o {py_output}'
-	binary_command = f'rcc -binary {qrc_file} -o {binary_output}'
+	binary_command = f'{qt_build_dir}/rcc -binary {qrc_file} -o {binary_output}'
 
 	# Check if the output file exists
 	if rcc_type == 'python':
@@ -176,7 +176,13 @@ def convert(path: str, color: str, _replace: bool = True, output: str = '') -> s
 		print(f'Failed to delete : {temp_out}')
 
 
-def generate_rcc(svgs: list, out_folder: str, color: str = '#000000', rcc_type: str = 'python') -> str:
+def generate_rcc(
+		svgs: list,
+		out_folder: str,
+		color: str = '#000000',
+		qt_build_dir: str = '',
+		rcc_type: str = 'python'
+) -> str:
 
 	"""Will generate a rcc file for resources from svgs
 	:param svgs: The list of svgs.
@@ -196,7 +202,7 @@ def generate_rcc(svgs: list, out_folder: str, color: str = '#000000', rcc_type: 
 	# Get the icon folder
 	icons_path = os.path.join(out_folder, 'icons')
 	if not os.path.isdir(icons_path):
-		os.mkdir(icons_path)
+		os.makedirs(icons_path)
 
 	# For every svg
 	for svg in svgs:
@@ -217,7 +223,7 @@ def generate_rcc(svgs: list, out_folder: str, color: str = '#000000', rcc_type: 
 		f.write(qrc_code)
 
 	# Convert
-	output, command = generate_rcc_output(qrc_file, rcc_type)
+	output, command = generate_rcc_output(qrc_file, rcc_type, qt_build_dir)
 	run_command(command)
 
 	# Status

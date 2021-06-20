@@ -6,7 +6,7 @@ import os
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from svg_to_qt.ui import header, color, browser, listview, addbutton
+from svg_to_qt.ui import header, color, browser, listview, addbutton, qt_root_browser, rcc_type
 from svg_to_qt.core import converter
 
 
@@ -47,6 +47,10 @@ class UI(QtWidgets.QWidget):
         left_lay = QtWidgets.QVBoxLayout()
         left_wid.setLayout(left_lay)
 
+        # Build browser
+        self._qt_build = qt_root_browser.QtRootBrowser()
+        left_lay.addWidget(self._qt_build)
+
         # Output
         out_wid = QtWidgets.QWidget()
         out_lay = QtWidgets.QGridLayout()
@@ -71,20 +75,8 @@ class UI(QtWidgets.QWidget):
         left_lay.addWidget(self._color)
 
         # Type
-        rcc_wid = QtWidgets.QWidget()
-        rcc_lay = QtWidgets.QHBoxLayout()
-        rcc_lay.setAlignment(QtCore.Qt.AlignLeft)
-        rcc_wid.setLayout(rcc_lay)
-
-        label_rcc_type = QtWidgets.QLabel('RCC Type :       ')
-        self._rcc_type = QtWidgets.QComboBox()
-        self._rcc_type.setFixedWidth(495)
-        self._rcc_type.addItem('python')
-        self._rcc_type.addItem('c++')
-        rcc_lay.addWidget(label_rcc_type)
-        rcc_lay.addWidget(self._rcc_type)
-
-        left_lay.addWidget(rcc_wid)
+        self._rcc_type = rcc_type.RCC_Type()
+        left_lay.addWidget(self._rcc_type)
 
         # Browser
         _browser = browser.Browser()
@@ -129,6 +121,9 @@ class UI(QtWidgets.QWidget):
         # Check the folder
         if os.path.isdir(folder):
             self._out_edit.setText(folder)
+
+    def set_qt_build_dir(self, path: str):
+        self._qt_build.set(path)
 
     def _convert(self):
 
@@ -176,8 +171,14 @@ class UI(QtWidgets.QWidget):
             print('Please specify out folder for RCC file.')
             return
 
+        # Qt build dir
+        qt_build_dir = self._qt_build.get()
+
+        # Compile type
+        compile_type = self._rcc_type.get()
+
         # Make rcc file
-        converter.generate_rcc(files, out_folder, color, self._rcc_type.currentText())
+        converter.generate_rcc(files, out_folder, color, qt_build_dir, compile_type)
 
     @property
     def background(self):
