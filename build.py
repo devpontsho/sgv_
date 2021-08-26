@@ -4,6 +4,7 @@ __version__ = 1.0
 import sys
 import os
 import shutil
+import subprocess
 
 
 def _copy_to(src: str, dest: str):
@@ -39,7 +40,7 @@ def build():
     # Install path
     install_path = _get_environment_value('REZ_BUILD_INSTALL_PATH')
     bin_install_dir = os.path.join(install_path, 'bin')
-    py_package_install_dir = os.path.join(install_path, 'svg_to_qt')
+    py_package_install_dir = os.path.join(install_path, 'svg_to_qt', 'svg_to_qt')
 
     # Source Dir
     source_path = _get_environment_value('REZ_BUILD_SOURCE_PATH')
@@ -53,6 +54,14 @@ def build():
 
         if item == 'svg_to_qt':
             _copy_to(path, py_package_install_dir)
+
+    pipe = subprocess.Popen(
+        f'chmod +x {bin_install_dir}/svg_to_qt', 
+        shell=True,
+        stdout=subprocess.PIPE, 
+        stderr=subprocess.PIPE
+    )
+    print(pipe.communicate(0))
 
 
 if __name__ == '__main__':

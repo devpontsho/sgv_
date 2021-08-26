@@ -1,7 +1,7 @@
 name = 'svg_to_qt'
 version = '1.0.0'
 
-build_command = 'python {root}/build.py {root}'
+build_command = 'python {root}/build.py'
 
 tools = ['svg_to_qt']
 

@@ -46,7 +46,8 @@ def standalone() -> None:
     """
 
     # Environment for Mac's new OS
-    os.environ['QT_MAC_WANTS_LAYER'] = '1'
+    if sys.platform == 'darwin':
+        os.environ['QT_MAC_WANTS_LAYER'] = '1'
 
     # Root folder
     root = os.path.dirname(os.path.abspath(__file__))
