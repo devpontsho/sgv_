@@ -1,61 +1,22 @@
 __author__ = 'Pontsho Maseko'
 __version__ = 1.0
-__all__ = ['generate_py_rcc', 'convert', 'generate_path', 'add_file_to_rcc']
+__all__ = ['generate_py_rcc', 'generate_binary_rcc', 'convert', 'generate_path', 'add_file_to_rcc']
 
 
 import os
 import random
 import string
-
-try:
-	import cairosvg
-except OSError as e:
-	import cairo
-	from svg_to_qt.core import rsvg
-
-import xml.etree.ElementTree as et
+import cairosvg
 import subprocess
 
 
-def windows_convert(source, dest):
-
-	"""Windows converting svg to png.
-	:param source: The svg path
-	:param dest: Output path
-	:return: None"""
-
-	parser = et.parse(source)
-	data = parser.getroot().attrib
-	width = 0
-	height = 0
-
-	if 'viewBox' in data.keys():
-		value = data['viewBox'].split(' ')
-		width = int(value[-2])
-		height = int(value[-1])
-
-	if 'width' in data.keys():
-		width = int(data['width'])
-
-	if 'height' in data.keys():
-		height = int(data['height'])
-
-	print('SVG Resolution : ', width, height)
-
-	img = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
-	ctx = cairo.Context(img)
-	handle = rsvg.Handle(source)
-	handle.render_cairo(ctx)
-	img.write_to_png(dest)
-
-
-def get_svgs(names, root, folders):
+def get_svgs(names: list, root: str, folders: list) -> list:
     
     """Get svgs from multiple folders.
     :param names: The names of the svg files.
     :param root: The root folder that the folders are in.
     :param folders: A list of folder names
-    :return: List
+    :return: list
     """
     
     svgs = []
@@ -81,13 +42,43 @@ def get_svgs(names, root, folders):
     return svgs
 
 
-def generate_path(folder, exten='.svg', length=5):
+def generate_rcc_output(qrc_file: str, rcc_type: str = 'python', qt_build_dir: str = '') -> list:
+
+	"""Generate the output files for the compile resource files.
+	:param qrc_file: The qrc file to compile
+	:param rcc_type: The language to compile for.
+	:return: list
+	"""
+
+	# Output files
+	py_output = qrc_file.replace('qrc', 'py')
+	binary_output = qrc_file.replace('qrc', 'rcc')
+
+	# Command files
+	py_command = f'pyside2-rcc {qrc_file} -o {py_output}'
+	binary_command = f'{qt_build_dir}/rcc -binary {qrc_file} -o {binary_output}'
+
+	# Check if the output file exists
+	if rcc_type == 'python':
+		if os.path.isfile(py_output):
+			os.remove(py_output)
+
+		return [py_output, py_command]
+
+	else:
+		if os.path.isfile(binary_output):
+			os.remove(binary_output)
+
+		return [binary_output, binary_command]
+
+
+def generate_path(folder: str, exten: str = '.svg', length: int = 5) -> str:
 
 	"""Generate a temporary path.
 	:param folder: The path to the folder to save in.
 	:param exten: The extern of the path that needs to be generated.
 	:param length: The name length.
-	:return: Str.
+	:return: str.
 	"""
 
 	name = ''
@@ -99,24 +90,13 @@ def generate_path(folder, exten='.svg', length=5):
 	return path
 
 
-def generate_py_rcc(path, output=''):
+def run_command(command: str) -> None:
 
 	"""Generate python resource file for qt.
-	:param path: the path the qrc file.
-	:param output: The output path for python resource file.
-	:return: 
+	:param path: Run the command.
+	:return: None
 	"""
 
-	# Check if output path is provided.
-	if output == '':
-		output = path.replace('qrc', 'py')
-
-	# Check if the output file exists
-	if os.path.isfile(output):
-		os.remove(output)
-
-	# Convert
-	command = 'pyside2-rcc {In} -o {Out}'.format(In=path, Out=output)
 	pipe = subprocess.Popen(
 		command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -127,19 +107,15 @@ def generate_py_rcc(path, output=''):
 		else:
 			print(line)
 
-	# Return
-	print('Py Resource File : {}'.format(output))
-	return output
 
-
-def convert(path, color, _replace=True, output=''):
+def convert(path: str, color: str, _replace: bool = True, output: str = '') -> str:
 
 	"""Changes the color of the svg and converts to png.
 	:param path: The path to svg image.
 	:param color: Hex code for the color to change to.
 	:param _replace: Should it replace files if they exist.
 	:param output: The output path of the new png.
-	:return: Str
+	:return: str
 	"""
 
 	# Check if the output path is given
@@ -157,7 +133,7 @@ def convert(path, color, _replace=True, output=''):
 		try:
 			data = f.read()
 		except:
-			print('Failed to read : {}'.format(path))
+			print(f'Failed to read : {path}')
 			return
 
 	# Fill in style
@@ -168,7 +144,7 @@ def convert(path, color, _replace=True, output=''):
 				
 				for style_tag in code.split('"'):
 					if style_tag.startswith('fill'):
-						new_style = code.replace(style_tag, 'fill:{};'.format(color))
+						new_style = code.replace(style_tag, f'fill:{color};')
 						data = data.replace(code, new_style)
 
 	# Fill without style
@@ -176,11 +152,11 @@ def convert(path, color, _replace=True, output=''):
 
 		for code in data.split(' '):
 			if code.startswith('fill'):
-				data = data.replace(code, 'fill="{}"'.format(color))
+				data = data.replace(code, f'fill="{color}"')
 
 	# Create 
 	else:
-		data = data.replace('path', 'path fill="{}"'.format(color))
+		data = data.replace('path', f'path fill="{color}"')
 	
 	# Write out then new svg
 	temp_out = generate_path(os.path.dirname(output))
@@ -189,27 +165,31 @@ def convert(path, color, _replace=True, output=''):
 	
 	# To PNG
 	print('Temporary SVG : ', temp_out)
-	try:
-		cairosvg.svg2png(url=temp_out, write_to=output)
-	except:
-		windows_convert(temp_out, output)
+	cairosvg.svg2png(url=temp_out, write_to=output)
 	print('Output : ', output)
 
 	# Remove new svg
 	try:
 		os.remove(temp_out)
-		print('Deleted : {}'.format(temp_out))
+		print(f'Deleted : {temp_out}')
 	except:
-		print('Failed to delete : {}'.format(temp_out))
+		print(f'Failed to delete : {temp_out}')
 
 
-def generate_rcc(svgs, out_folder, color='#000000'):
+def generate_rcc(
+		svgs: list,
+		out_folder: str,
+		color: str = '#000000',
+		qt_build_dir: str = '',
+		rcc_type: str = 'python'
+) -> str:
 
 	"""Will generate a rcc file for resources from svgs
 	:param svgs: The list of svgs.
 	:param out_folder: The output folder for the new png icons and resource file.
 	:param color: The color to conver the svg file to, default is black.
-	:return: Str.
+	:param rcc_type: The language rcc to build for.
+	:return: str.
 	"""
 
 	# qrc code
@@ -222,7 +202,7 @@ def generate_rcc(svgs, out_folder, color='#000000'):
 	# Get the icon folder
 	icons_path = os.path.join(out_folder, 'icons')
 	if not os.path.isdir(icons_path):
-		os.mkdir(icons_path)
+		os.makedirs(icons_path)
 
 	# For every svg
 	for svg in svgs:
@@ -242,26 +222,28 @@ def generate_rcc(svgs, out_folder, color='#000000'):
 	with open(qrc_file, 'w') as f:
 		f.write(qrc_code)
 
-	# Return the resource file
-	print('Resource File : {}'.format(qrc_file))
+	# Convert
+	output, command = generate_rcc_output(qrc_file, rcc_type, qt_build_dir)
+	run_command(command)
 
-	# Generate resource
-	py_rcc = generate_py_rcc(qrc_file)
+	# Status
+	print(f'Resource File : {qrc_file}')
+	print(f'Compile RCC File : {output}')
 
 	# Return
-	return py_rcc
+	return output
 
 
-def add_file_to_rcc(resource_file, file):
+def add_file_to_rcc(qrc_file: str, file: str, rcc_type: str = 'python') -> None:
 
 	"""Add file to a resource file
-	:param resource_file: The resource file.
+	:param qrc_file: The resource file.
 	:param file: The file to add to the resource file.
 	:return : None.
 	"""
 
 	# Get the qrc code
-	with open(resource_file, 'r') as f:
+	with open(qrc_file, 'r') as f:
 		rc_code = f.read()
 
 	# Lines of the rc code
@@ -276,10 +258,15 @@ def add_file_to_rcc(resource_file, file):
 	rc_code = '\n'.join(lines)
 
 	# Write the rc code
-	with open(resource_file, 'w+') as f:
+	with open(qrc_file, 'w+') as f:
 		f.write(rc_code)
 
-	# Generate the python resource file
-	generate_py_rcc(resource_file)
+	# Generate the resource file
+	output, command = generate_rcc_output(qrc_file, rcc_type)
+	run_command(command)
+
+	# Status
+	print(f'Resource File : {qrc_file}')
+	print(f'Compile RCC File : {output}')
 
 

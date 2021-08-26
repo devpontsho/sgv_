@@ -36,7 +36,7 @@ class Header(QtWidgets.QWidget):
         m_layout.addWidget(min_btn)
 
         # Left spacer
-        left_spacer = QtWidgets.QSpacerItem(300, 0)
+        left_spacer = QtWidgets.QSpacerItem(350, 0)
         m_layout.addItem(left_spacer)
 
         # Header

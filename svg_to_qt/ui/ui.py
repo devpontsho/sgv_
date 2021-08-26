@@ -6,7 +6,7 @@ import os
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from svg_to_qt.ui import header, color, browser, listview, addbutton
+from svg_to_qt.ui import header, color, browser, listview, addbutton, qt_root_browser, rcc_type
 from svg_to_qt.core import converter
 
 
@@ -22,10 +22,10 @@ class UI(QtWidgets.QWidget):
         self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
-        self.setMinimumSize(700, 600)
+        self.setMinimumSize(1000, 600)
 
         # Set Attributes
-        self.radius = 0
+        self.radius = 2
         self.background = QtGui.QColor(51, 51, 51)
         self.foreground = QtGui.QColor(51, 51, 51)
 
@@ -46,6 +46,10 @@ class UI(QtWidgets.QWidget):
         seperator.addWidget(left_wid)
         left_lay = QtWidgets.QVBoxLayout()
         left_wid.setLayout(left_lay)
+
+        # Build browser
+        self._qt_build = qt_root_browser.QtRootBrowser()
+        left_lay.addWidget(self._qt_build)
 
         # Output
         out_wid = QtWidgets.QWidget()
@@ -69,6 +73,10 @@ class UI(QtWidgets.QWidget):
         # Color
         self._color = color.Color()
         left_lay.addWidget(self._color)
+
+        # Type
+        self._rcc_type = rcc_type.RCC_Type()
+        left_lay.addWidget(self._rcc_type)
 
         # Browser
         _browser = browser.Browser()
@@ -113,6 +121,9 @@ class UI(QtWidgets.QWidget):
         # Check the folder
         if os.path.isdir(folder):
             self._out_edit.setText(folder)
+
+    def set_qt_build_dir(self, path: str):
+        self._qt_build.set(path)
 
     def _convert(self):
 
@@ -160,8 +171,14 @@ class UI(QtWidgets.QWidget):
             print('Please specify out folder for RCC file.')
             return
 
+        # Qt build dir
+        qt_build_dir = self._qt_build.get()
+
+        # Compile type
+        compile_type = self._rcc_type.get()
+
         # Make rcc file
-        converter.generate_rcc(files, out_folder, color)
+        converter.generate_rcc(files, out_folder, color, qt_build_dir, compile_type)
 
     @property
     def background(self):
