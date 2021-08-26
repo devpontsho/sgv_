@@ -30,7 +30,7 @@ class Color(QtWidgets.QWidget):
         btn.setIconSize(QtCore.QSize(25, 25))
         m_layout.addWidget(btn, 0, 2)
 
-    def _pick(self):
+    def _pick(self) -> None:
 
         # Color picker
         dialog = QtWidgets.QColorDialog()
@@ -40,5 +40,5 @@ class Color(QtWidgets.QWidget):
         hex_color = c.name()
         self._edit.setText(hex_color)
 
-    def get(self):
+    def get(self) -> str:
         return self._edit.text()

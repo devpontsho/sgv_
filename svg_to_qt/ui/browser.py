@@ -45,7 +45,7 @@ class Browser(QtWidgets.QWidget):
         browse_btn.setIconSize(QtCore.QSize(25, 25))
         m_layout.addWidget(browse_btn, 1, 2)
 
-    def _browse(self):
+    def _browse(self) -> None:
 
         """Browse the file."""
 
@@ -79,7 +79,7 @@ class Browser(QtWidgets.QWidget):
         self._edit.setText(value)
         self.gotFiles.emit(value.split(';'))
 
-    def get(self):
+    def get(self) -> list:
         return self._edit.text().split(';')
 
 

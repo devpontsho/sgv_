@@ -3,7 +3,7 @@ __version__ = 1.0
 __all__ = ['create_svg', 'write_svg']
 
 
-def create_svg(data):
+def create_svg(data: str) -> None:
 
     """Create svg from data given.
     :param data: Dictionary with instructions to build svg.
@@ -27,7 +27,7 @@ def create_svg(data):
             if tag == 'style':
                 
                 # Tag
-                style_tag =  'style="'
+                style_tag = 'style="'
 
                 # For every style
                 for style in dic['style']:
@@ -50,7 +50,7 @@ def create_svg(data):
     write_svg(svg_code, data['output'])
 
 
-def write_svg(data, output=''):
+def write_svg(data: str, output: str = '') -> None:
 
     """Write out svg
     :param data: The svg code.
