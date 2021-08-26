@@ -1,7 +1,9 @@
 name = 'svg_to_qt'
 version = '1.0.0'
 
-build_command = False
+build_command = 'python {root}/build.py {root}'
+
+tools = ['svg_to_qt']
 
 requires = [
     'python-3.6+',
@@ -10,4 +12,5 @@ requires = [
 ]
 
 def commands():
+    env.PATH.append('{root}/bin')
     env.PYTHONPATH.append('{root}/svg_to_qt')
